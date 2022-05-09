@@ -5,8 +5,10 @@ go 1.17
 require (
 	cloud.google.com/go/cloudsqlconn v0.3.1
 	github.com/expel-io/vault-plugin-database-cloudsql/cloudsql v0.0.0-00010101000000-000000000000
+	github.com/hashicorp/go-hclog v1.1.0
 	github.com/hashicorp/vault v1.9.4
 	github.com/hashicorp/vault/sdk v0.4.1
+	github.com/pkg/errors v0.9.1
 )
 
 require (
@@ -19,7 +21,6 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/gax-go/v2 v2.3.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
-	github.com/hashicorp/go-hclog v1.1.0 // indirect
 	github.com/hashicorp/go-immutable-radix v1.3.1 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/go-plugin v1.4.3 // indirect
