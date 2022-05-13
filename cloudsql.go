@@ -16,43 +16,43 @@ import (
 type CloudSQL struct {
 	*connutil.SQLConnectionProducer
 
-	cloudsqlDBType string
+	dbType DBType
 
 	// delegates to the target cloudsql instance type. e.g.: postgres, mysql, etc
-	targetDBDelegate dbplugin.Database
+	delegateVaultPlugin dbplugin.Database
 
-	cloudsqlConnectorCleanup func() error
+	connectorCleanup func() error
 }
 
-func New(cloudsqlDBInstanceType string) (interface{}, error) {
+func New(dbType DBType) (interface{}, error) {
 	// use the "database/sql" package for connection management.
 	// this allows us to connect to the target database (postgres, mysql, etc) using
 	// the common dialect provided by the "database/sql" package.
 	connProducer := &connutil.SQLConnectionProducer{}
-	connProducer.Type = cloudsqlDBInstanceType
+	connProducer.Type = dbType.String()
 
-	var delegateTargetDB dbplugin.Database
+	var delegateVaultPlugin dbplugin.Database
 	var connectorCleanUpFunc func() error
 	var secretValuesMaskingFunc func() map[string]string
 	var err error
 
 	// determine the target cloudsql db instance type and delegate database operations to it
-	if cloudsqlDBInstanceType == "cloudsql-postgres" {
-		delegateTargetDB, connectorCleanUpFunc, secretValuesMaskingFunc, err = newPostgresDatabase(cloudsqlDBInstanceType, connProducer)
+	if dbType == Postgres {
+		delegateVaultPlugin, connectorCleanUpFunc, secretValuesMaskingFunc, err = newPostgresDatabase(dbType, connProducer)
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to initialize connector for 'postgres' database instance")
 		}
 	} else {
 		// no other types are supported yet
-		return nil, errors.Errorf("unsupported target cloudsql database instance type: %s", cloudsqlDBInstanceType)
+		return nil, errors.Errorf("unsupported target cloudsql database instance type: %s", dbType)
 	}
 
 	// initialize the database plugin
 	cloudsqlDB := &CloudSQL{
-		cloudsqlDBType:           cloudsqlDBInstanceType,
-		SQLConnectionProducer:    connProducer,
-		targetDBDelegate:         delegateTargetDB,
-		cloudsqlConnectorCleanup: connectorCleanUpFunc,
+		dbType:                dbType,
+		SQLConnectionProducer: connProducer,
+		delegateVaultPlugin:   delegateVaultPlugin,
+		connectorCleanup:      connectorCleanUpFunc,
 	}
 
 	// Wrap the plugin with middleware to sanitize errors
@@ -63,24 +63,24 @@ func New(cloudsqlDBInstanceType string) (interface{}, error) {
 // Initialize the database plugin. This is the equivalent of a constructor for the
 // database object itself.
 func (c *CloudSQL) Initialize(ctx context.Context, req dbplugin.InitializeRequest) (dbplugin.InitializeResponse, error) {
-	return c.targetDBDelegate.Initialize(ctx, req)
+	return c.delegateVaultPlugin.Initialize(ctx, req)
 }
 
 // NewUser creates a new user within the database. This user is temporary in that it
 // will exist until the TTL expires.
 func (c *CloudSQL) NewUser(ctx context.Context, req dbplugin.NewUserRequest) (dbplugin.NewUserResponse, error) {
-	return c.targetDBDelegate.NewUser(ctx, req)
+	return c.delegateVaultPlugin.NewUser(ctx, req)
 }
 
 // UpdateUser updates an existing user within the database.
 func (c *CloudSQL) UpdateUser(ctx context.Context, req dbplugin.UpdateUserRequest) (dbplugin.UpdateUserResponse, error) {
-	return c.targetDBDelegate.UpdateUser(ctx, req)
+	return c.delegateVaultPlugin.UpdateUser(ctx, req)
 }
 
 // DeleteUser from the database. This should not error if the user didn't
 // exist prior to this call.
 func (c *CloudSQL) DeleteUser(ctx context.Context, req dbplugin.DeleteUserRequest) (dbplugin.DeleteUserResponse, error) {
-	return c.targetDBDelegate.DeleteUser(ctx, req)
+	return c.delegateVaultPlugin.DeleteUser(ctx, req)
 }
 
 // Type returns the Name for the particular database backend implementation.
@@ -88,20 +88,20 @@ func (c *CloudSQL) DeleteUser(ctx context.Context, req dbplugin.DeleteUserReques
 // implementation, e.g. "mysql" for the MySQL database backend. This is used
 // for things like metrics and logging. No behavior is switched on this.
 func (c *CloudSQL) Type() (string, error) {
-	return c.cloudsqlDBType, nil
+	return c.dbType.String(), nil
 }
 
 // Close attempts to close the underlying database connection that was
 // established by the backend.
 func (c *CloudSQL) Close() error {
-	err := c.targetDBDelegate.Close()
+	err := c.delegateVaultPlugin.Close()
 	if err != nil {
 		return err
 	}
-	return c.cloudsqlConnectorCleanup()
+	return c.connectorCleanup()
 }
 
-func newPostgresDatabase(cloudsqlDbType string, connProducer *connutil.SQLConnectionProducer) (dbplugin.Database, func() error, func() map[string]string, error) {
+func newPostgresDatabase(dbType DBType, connProducer *connutil.SQLConnectionProducer) (dbplugin.Database, func() error, func() map[string]string, error) {
 	// setup the connector's "cloudsql-postgres" driver to "proxy" to cloudsql instance with Google IAM creds
 	// See: https://github.com/GoogleCloudPlatform/cloud-sql-go-connector
 	//
@@ -110,7 +110,7 @@ func newPostgresDatabase(cloudsqlDbType string, connProducer *connutil.SQLConnec
 	//
 	// attribute 'sslmode=disable' is required. even though the sslmode parameter is set to disable,
 	// the Cloud SQL Auth proxy does provide an encrypted connection.
-	cleanup, err := pgxv4.RegisterDriver(cloudsqlDbType, cloudsqlconn.WithIAMAuthN())
+	cleanup, err := pgxv4.RegisterDriver(dbType.String(), cloudsqlconn.WithIAMAuthN())
 	if err != nil {
 		return nil, nil, nil, errors.Wrap(err, "failed to register 'postgres' driver with 'cloud-sql-go-connector'")
 	}

@@ -16,11 +16,8 @@ func main() {
 	})
 
 	// TODO get target db type from arguments/terraform and pass to plugin
-	// TODO convert to an enum
-	cloudsqlDbInstanceType := "cloudsql-postgres"
-
 	// initialize "cloudsql" database plugin
-	cloudsqlDatabase, err := cloudsql.New(cloudsqlDbInstanceType)
+	cloudsqlDatabase, err := cloudsql.New(cloudsql.Postgres)
 	if err != nil {
 		logger.Error("failed to initialize cloudsql database plugin. aborting now.", err)
 		os.Exit(1)
