@@ -11,7 +11,7 @@ import (
 
 func TestNewDelegatesToVaultPostgresPlugin(t *testing.T) {
 	// initialize for a postgres database
-	dbPlugin, err := New("cloudsql-postgres")
+	dbPlugin, err := New(Postgres)
 	if err != nil {
 		t.Error("failed to initialize cloudsql database", err)
 		return
@@ -24,10 +24,10 @@ func TestNewDelegatesToVaultPostgresPlugin(t *testing.T) {
 	cloudsqlInterface := safePointerToCloudsqlDB.Interface()
 	cloudsqlDB := cloudsqlInterface.(*CloudSQL)
 
-	// assert that the correct targetDBDelegate was initialized
-	_, ok := cloudsqlDB.targetDBDelegate.(*postgresql.PostgreSQL)
+	// assert that the correct delegateVaultPlugin was initialized
+	_, ok := cloudsqlDB.delegateVaultPlugin.(*postgresql.PostgreSQL)
 	if !ok {
-		t.Errorf("expected type of targetDBDelegate to be of type *postgresql.PostgreSQL but got %s\n", reflect.TypeOf(cloudsqlDB.targetDBDelegate))
+		t.Errorf("expected type of delegated database vault plugin to be of type '*postgresql.PostgreSQL' but got '%s'", reflect.TypeOf(cloudsqlDB.delegateVaultPlugin))
 	}
 	// Todo assert that the driver was registered correctly
 }
