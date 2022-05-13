@@ -1,6 +1,7 @@
 package cloudsql
 
 import (
+	"database/sql"
 	"reflect"
 	"testing"
 	"unsafe"
@@ -29,5 +30,15 @@ func TestNewDelegatesToVaultPostgresPlugin(t *testing.T) {
 	if !ok {
 		t.Errorf("expected type of delegated database vault plugin to be of type '*postgresql.PostgreSQL' but got '%s'", reflect.TypeOf(cloudsqlDB.delegateVaultPlugin))
 	}
-	// Todo assert that the driver was registered correctly
+
+	// assert that the driver was registered correctly
+	foundDriver := false
+	for _, v := range sql.Drivers() {
+		if v == Postgres.String() {
+			foundDriver = true
+		}
+	}
+	if !foundDriver {
+		t.Error("expected the driver 'cloudsql-postgres' to be registered but was not found")
+	}
 }
