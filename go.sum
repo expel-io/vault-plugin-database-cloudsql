@@ -279,8 +279,8 @@ github.com/hashicorp/go-secure-stdlib/mlock v0.1.1/go.mod h1:zq93CJChV6L9QTfGKtf
 github.com/hashicorp/go-secure-stdlib/mlock v0.1.2 h1:p4AKXPPS24tO8Wc8i1gLvSKdmkiSY5xuju57czJ/IJQ=
 github.com/hashicorp/go-secure-stdlib/mlock v0.1.2/go.mod h1:zq93CJChV6L9QTfGKtfBxKqD7BqqXx5O04A/ns2p5+I=
 github.com/hashicorp/go-secure-stdlib/parseutil v0.1.1/go.mod h1:QmrqtbKuxxSWTN3ETMPuB+VtEiBJ/A9XhoYGv8E1uD8=
-github.com/hashicorp/go-secure-stdlib/parseutil v0.1.3 h1:geBw3SBrxQq+buvbf4K+Qltv1gjaXJxy8asD4CjGYow=
-github.com/hashicorp/go-secure-stdlib/parseutil v0.1.3/go.mod h1:QmrqtbKuxxSWTN3ETMPuB+VtEiBJ/A9XhoYGv8E1uD8=
+github.com/hashicorp/go-secure-stdlib/parseutil v0.1.4 h1:hrIH/qrOTHfG9a1Jz6Z2jQf7Xe77AaD464W1fCFLwPQ=
+github.com/hashicorp/go-secure-stdlib/parseutil v0.1.4/go.mod h1:QmrqtbKuxxSWTN3ETMPuB+VtEiBJ/A9XhoYGv8E1uD8=
 github.com/hashicorp/go-secure-stdlib/password v0.1.1/go.mod h1:9hH302QllNwu1o2TGYtSk8I8kTAN0ca1EHpwhm5Mmzo=
 github.com/hashicorp/go-secure-stdlib/strutil v0.1.1/go.mod h1:gKOamz3EwoIoJq7mlMIRBpVTAUn8qPCrEclOKKWhD3U=
 github.com/hashicorp/go-secure-stdlib/strutil v0.1.2 h1:kes8mmyCpxJsI7FTwtzRqEy9CdjCtrXrXGuOpxEA7Ts=
@@ -301,12 +301,13 @@ github.com/hashicorp/golang-lru v0.5.4/go.mod h1:iADmTwqILo4mZ8BN3D2Q6+9jd8WM5uG
 github.com/hashicorp/hcl v1.0.0/go.mod h1:E5yfLk+7swimpb2L/Alb/PJmXilQ/rhwaUYs4T20WEQ=
 github.com/hashicorp/hcl v1.0.1-vault-3 h1:V95v5KSTu6DB5huDSKiq4uAfILEuNigK/+qPET6H/Mg=
 github.com/hashicorp/hcl v1.0.1-vault-3/go.mod h1:XYhtn6ijBSAj6n4YqAaf7RBPS4I06AItNorpy+MoQNM=
-github.com/hashicorp/vault v1.9.4 h1:NIu/hf8PL1zvDgCGIfvYiTA3dYFmrbG019ZEdNth4bQ=
-github.com/hashicorp/vault v1.9.4/go.mod h1:gC/ndowZX+7LI51UTcJIUQMfnuhL1pcDU+g8A2ccHis=
+github.com/hashicorp/vault v1.10.3 h1:QOgzDNyzbS/14rWTxuU4SDAsd4KXor/VK1C+T97QHLs=
+github.com/hashicorp/vault v1.10.3/go.mod h1:BgV2co9MLBBgjiz8By6PHe2hnYQRPDXzQD3zNoqpXF4=
 github.com/hashicorp/vault/api v1.5.0 h1:Bp6yc2bn7CWkOrVIzFT/Qurzx528bdavF3nz590eu28=
 github.com/hashicorp/vault/api v1.5.0/go.mod h1:LkMdrZnWNrFaQyYYazWVn7KshilfDidgVBq6YiTq/bM=
-github.com/hashicorp/vault/sdk v0.4.1 h1:3SaHOJY687jY1fnB61PtL0cOkKItphrbLmux7T92HBo=
 github.com/hashicorp/vault/sdk v0.4.1/go.mod h1:aZ3fNuL5VNydQk8GcLJ2TV8YCRVvyaakYkhZRoVuhj0=
+github.com/hashicorp/vault/sdk v0.4.2-0.20220429220057-bdb59a36e632 h1:SOMCNXS3viuyyGC+5c2VpCoR2SG3pryxs5+Y5GgQbZo=
+github.com/hashicorp/vault/sdk v0.4.2-0.20220429220057-bdb59a36e632/go.mod h1:gqE65IIVlvR382JKqtzG1lJX5wVl/wdbdYhsTKTv13o=
 github.com/hashicorp/yamux v0.0.0-20180604194846-3520598351bb/go.mod h1:+NfK9FKeTrX5uv1uIXGdwYDTeHna2qgaIlx54MXqjAM=
 github.com/hashicorp/yamux v0.0.0-20211028200310-0bc27b27de87 h1:xixZ2bWeofWV68J+x6AzmKuVM/JWCQwkWm6GW/MUR6I=
 github.com/hashicorp/yamux v0.0.0-20211028200310-0bc27b27de87/go.mod h1:CtWFDAQgb7dxtzFs4tWbplKIe2jSi3+5vKbgIO0SLnQ=

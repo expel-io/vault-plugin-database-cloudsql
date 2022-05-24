@@ -13,7 +13,7 @@ test:
 build:
 	go get ./...
 	go build ./...
-	go build -o build/vault-plugin-database-cloudsql cmd/vault-plugin-database-cloudsql/main.go
+	go build -o build/vault-plugin-database-cloudsql cmd/vault-plugin-database-cloudsql/*
 
 precommit:
 	pre-commit install
