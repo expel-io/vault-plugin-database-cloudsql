@@ -19,7 +19,7 @@ func TestNewDelegatesToVaultPostgresPlugin(t *testing.T) {
 	}
 
 	wrappedDBMiddleware := dbPlugin.(dbplugin.DatabaseErrorSanitizerMiddleware)
-	// Get the cloudsql db plugin instance from the wrapping middleware
+	// get the cloudsql db plugin instance from the wrapping middleware
 	wrappedCloudsqlDB := reflect.ValueOf(&wrappedDBMiddleware).Elem().FieldByName("next")
 	safePointerToCloudsqlDB := reflect.NewAt(wrappedCloudsqlDB.Type(), unsafe.Pointer(wrappedCloudsqlDB.UnsafeAddr())).Elem()
 	cloudsqlInterface := safePointerToCloudsqlDB.Interface()
