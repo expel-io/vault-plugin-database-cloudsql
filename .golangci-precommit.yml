@@ -1,0 +1,20 @@
+run:
+output:
+  print-issued-lines: false
+linters:
+  disable-all: true
+  enable:
+    - govet
+    - errcheck
+    - structcheck
+    - varcheck
+    - revive
+    - goimports
+    - unparam
+    - typecheck
+    - deadcode
+    - ineffassign
+    - gosimple
+    - megacheck
+issues:
+  new-from-rev: origin/main
