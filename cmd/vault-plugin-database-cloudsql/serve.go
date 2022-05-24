@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 
 	"github.com/expel-io/vault-plugin-database-cloudsql/cloudsql"
@@ -23,7 +24,11 @@ func Serve(ctx context.Context, testServerChan chan *plugin.ReattachConfig) {
 	var flagLogLevel string
 	flags.StringVar(&flagDBType, "db-type", cloudsql.Postgres.String(), "can be: 'cloudsql-postgres'")
 	flags.StringVar(&flagLogLevel, "log-level", "info", "can be: 'trace', 'debug', 'info', 'warn', 'error', 'off'")
-	flags.Parse(os.Args[1:])
+	err := flags.Parse(os.Args[1:])
+	if err != nil {
+		fmt.Printf("unable to parse plugin arguments: %s", err)
+		os.Exit(1)
+	}
 
 	logger := hclog.New(&hclog.LoggerOptions{
 		Name:  "vault-plugin-database-cloudsql",
