@@ -1,0 +1,54 @@
+---
+version: 2.1
+
+orbs:
+  go: circleci/go@1.7.1
+
+workflows:
+  ci:
+    jobs:
+      - lint:
+          filters:
+            branches:
+              only:
+                - /.*/
+      - test:
+          requires:
+            - lint
+          filters:
+            branches:
+              only:
+                - /.*/
+
+jobs:
+  lint:
+    docker:
+      # we lint with pre-commit hence a python based image
+      - image: cimg/python:3.10.4
+    steps:
+      - checkout
+      - run:
+          name: install pre-commit
+          command: pip install pre-commit
+      - go/install:
+          version: 1.17.10
+      - run:
+          name: lint source code
+          command: make lint
+
+  test:
+    docker:
+      - image: cimg/go:1.17.10
+    steps:
+      - checkout
+      - run:
+          name: create dummy credentials for tests
+          command: |
+            cat \<< EOF >> $(pwd)/fake-creds.json
+            {
+              "type": "authorized_user"
+            }
+            EOF
+      - run:
+          name: run unit tests
+          command: GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/fake-creds.json make test

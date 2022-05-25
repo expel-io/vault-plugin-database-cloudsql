@@ -17,3 +17,6 @@ build:
 
 precommit:
 	pre-commit install
+
+lint: precommit
+	pre-commit run --all-files

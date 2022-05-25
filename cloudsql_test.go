@@ -14,21 +14,21 @@ func TestNewDelegatesToVaultPostgresPlugin(t *testing.T) {
 	// initialize for a postgres database
 	dbPlugin, err := New(Postgres)
 	if err != nil {
-		t.Error("failed to initialize cloudsql database", err)
+		t.Error("failed to initialize CloudSQL database", err)
 		return
 	}
 
 	wrappedDBMiddleware := dbPlugin.(dbplugin.DatabaseErrorSanitizerMiddleware)
-	// get the cloudsql db plugin instance from the wrapping middleware
-	wrappedCloudsqlDB := reflect.ValueOf(&wrappedDBMiddleware).Elem().FieldByName("next")
-	safePointerToCloudsqlDB := reflect.NewAt(wrappedCloudsqlDB.Type(), unsafe.Pointer(wrappedCloudsqlDB.UnsafeAddr())).Elem()
-	cloudsqlInterface := safePointerToCloudsqlDB.Interface()
-	cloudsqlDB := cloudsqlInterface.(*CloudSQL)
+	// get the CloudSQL db plugin instance from the wrapping middleware
+	wrappedPlugin := reflect.ValueOf(&wrappedDBMiddleware).Elem().FieldByName("next")
+	safePointerToPlugin := reflect.NewAt(wrappedPlugin.Type(), unsafe.Pointer(wrappedPlugin.UnsafeAddr())).Elem()
+	cloudSQLInterface := safePointerToPlugin.Interface()
+	cloudSQLPlugin := cloudSQLInterface.(*CloudSQL)
 
 	// assert that the correct delegateVaultPlugin was initialized
-	_, ok := cloudsqlDB.delegateVaultPlugin.(*postgresql.PostgreSQL)
+	_, ok := cloudSQLPlugin.delegateVaultPlugin.(*postgresql.PostgreSQL)
 	if !ok {
-		t.Errorf("expected type of delegated database vault plugin to be of type '*postgresql.PostgreSQL' but got '%s'", reflect.TypeOf(cloudsqlDB.delegateVaultPlugin))
+		t.Errorf("expected type of delegated database vault plugin to be of type '*postgresql.PostgreSQL' but got '%s'", reflect.TypeOf(cloudSQLPlugin.delegateVaultPlugin))
 	}
 
 	// assert that the driver was registered correctly
