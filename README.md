@@ -27,7 +27,34 @@ The following plugin arguments are supported:
 This is currently the only supported database type.
 * `-log-level`, defaults to `info`
 
-## Example Usage with Terraform
+## Getting Started
+
+### 1. Building the plugin
+
+Build the plugin binary for your target architecture:
+
+```sh
+make build
+```
+
+### 2. Install the plugin binary
+
+After the plugin is built, it must be made available to the Vault server runtime.
+Move the compiled plugin into Vault's configured `plugin_directory`:
+
+```sh
+# in the following example the `plugin_directory` is `/etc/vault/plugins`
+mv vault-plugin-database-cloudsql /etc/vault/plugins/vault-plugin-database-cloudsql
+```
+
+### 3. Calculate the SHA of the plugin
+
+```sh
+# save the output of this to register your plugin on the next step
+sha256sum /app/bin/plugins/vault-plugin-database-cloudsql
+```
+
+### 4. Register the plugin with terraform
 
 After building this plugin and making it available to your Vault
 runtime, you can [register][4] the plugin to the [plugin catalog][5] like this:
