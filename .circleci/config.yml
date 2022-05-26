@@ -32,6 +32,7 @@ jobs:
           command: pip install pre-commit
       - go/install:
           version: 1.17.10
+          cache: false
       - run:
           name: lint source code
           command: make lint
@@ -42,13 +43,5 @@ jobs:
     steps:
       - checkout
       - run:
-          name: create dummy credentials for tests
-          command: |
-            cat \<< EOF >> $(pwd)/fake-creds.json
-            {
-              "type": "authorized_user"
-            }
-            EOF
-      - run:
           name: run unit tests
-          command: GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/fake-creds.json make test
+          command: make test
