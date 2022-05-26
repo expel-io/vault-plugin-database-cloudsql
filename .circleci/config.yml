@@ -30,6 +30,10 @@ jobs:
       - run:
           name: install pre-commit
           command: pip install pre-commit
+      - run:
+          command: |
+              sudo mkdir -p /usr/local/go
+              sudo chown -R $(whoami): /usr/local/go
       - go/install:
           version: 1.17.10
           cache: false
