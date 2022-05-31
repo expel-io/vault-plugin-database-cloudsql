@@ -35,7 +35,7 @@ jobs:
               sudo mkdir -p /usr/local/go
               sudo chown -R $(whoami): /usr/local/go
       - go/install:
-          version: 1.17.10
+          version: 1.18.2
           cache: false
       - run:
           name: lint source code
@@ -43,7 +43,7 @@ jobs:
 
   test:
     docker:
-      - image: cimg/go:1.17.10
+      - image: cimg/go:1.18.2
     steps:
       - checkout
       - run:
