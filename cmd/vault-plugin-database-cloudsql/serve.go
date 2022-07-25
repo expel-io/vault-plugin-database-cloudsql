@@ -47,23 +47,9 @@ func Serve(ctx context.Context, testServerChan chan *plugin.ReattachConfig) {
 		return cloudsqlDatabase, nil
 	}
 
-	// Vault communicates to plugins over RPC
-	// start RPC server to which vault will connect to
-	// See: https://www.vaultproject.io/docs/secrets/databases/custom#serving-a-plugin
-	var serveConfig *plugin.ServeConfig
-	if flagMultiplex {
-		// See: https://www.vaultproject.io/docs/plugins/plugin-architecture#plugin-multiplexing
-		serveConfig = dbplugin.ServeConfigMultiplex(pluginFactory)
-	} else {
-		dbPlugin, err := pluginFactory()
-		if err != nil {
-			logger.Error("failed to initialize database plugin. aborting now.", err)
-			os.Exit(1)
-		}
-		serveConfig = dbplugin.ServeConfig(dbPlugin.(dbplugin.Database))
-	}
-	if serveConfig == nil {
-		logger.Error("failed to initialize server config for plugin. aborting now.")
+	serveConfig, err := initServeConfig(flagMultiplex, pluginFactory, logger)
+	if err != nil {
+		logger.Error("failed to initialize database plugin. aborting now.", err)
 		os.Exit(1)
 	}
 	if testServerChan != nil {
@@ -77,5 +63,27 @@ func Serve(ctx context.Context, testServerChan chan *plugin.ReattachConfig) {
 	} else {
 		serveConfig.Logger = logger
 	}
+	// Vault communicates to plugins over RPC
+	// start RPC server to which vault will connect to
+	// See: https://www.vaultproject.io/docs/secrets/databases/custom#serving-a-plugin
 	plugin.Serve(serveConfig)
+}
+
+func initServeConfig(flagMultiplex bool, pluginFactory dbplugin.Factory, logger hclog.Logger) (*plugin.ServeConfig, error) {
+	logger.Debug("initializing cloudsql plugin with multiplexing=%t", flagMultiplex)
+	var serveConfig *plugin.ServeConfig
+	if flagMultiplex {
+		// See: https://www.vaultproject.io/docs/plugins/plugin-architecture#plugin-multiplexing
+		serveConfig = dbplugin.ServeConfigMultiplex(pluginFactory)
+	} else {
+		dbPlugin, err := pluginFactory()
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to create new plugin instance")
+		}
+		serveConfig = dbplugin.ServeConfig(dbPlugin.(dbplugin.Database))
+	}
+	if serveConfig == nil {
+		return nil, errors.New("failed to initialize server config for plugin")
+	}
+	return serveConfig, nil
 }
