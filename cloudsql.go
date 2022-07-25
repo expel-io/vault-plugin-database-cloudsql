@@ -110,6 +110,7 @@ func newPostgresDatabase(dbType DBType, connProducer *connutil.SQLConnectionProd
 	//
 	// attribute 'sslmode=disable' is required. even though the sslmode parameter is set to disable,
 	// the Cloud SQL Auth proxy does provide an encrypted connection.
+	// See: https://cloud.google.com/sql/docs/postgres/connect-admin-proxy#connect-to-proxy
 	cleanup, err := pgxv4.RegisterDriver(dbType.String(), cloudsqlconn.WithIAMAuthN())
 	if err != nil {
 		return nil, nil, nil, errors.Wrap(err, "failed to register 'postgres' driver with 'cloud-sql-go-connector'")

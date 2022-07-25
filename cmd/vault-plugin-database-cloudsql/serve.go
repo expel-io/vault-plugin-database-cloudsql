@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/go-plugin"
 	"github.com/hashicorp/vault/api"
 	dbplugin "github.com/hashicorp/vault/sdk/database/dbplugin/v5"
+	"github.com/pkg/errors"
 )
 
 // Serve launches the plugin
@@ -22,8 +23,10 @@ func Serve(ctx context.Context, testServerChan chan *plugin.ReattachConfig) {
 	flags := apiClientMeta.FlagSet()
 	var flagDBType string
 	var flagLogLevel string
+	var flagMultiplex bool
 	flags.StringVar(&flagDBType, "db-type", cloudsql.Postgres.String(), "can be: 'cloudsql-postgres'")
 	flags.StringVar(&flagLogLevel, "log-level", "info", "can be: 'trace', 'debug', 'info', 'warn', 'error', 'off'")
+	flags.BoolVar(&flagMultiplex, "multiplex", true, "Whether to enable plugin multiplexing. can be: 'true' or 'false'")
 	err := flags.Parse(os.Args[1:])
 	if err != nil {
 		fmt.Printf("unable to parse plugin arguments: %s", err)
@@ -35,20 +38,36 @@ func Serve(ctx context.Context, testServerChan chan *plugin.ReattachConfig) {
 		Level: hclog.LevelFromString(flagLogLevel),
 	})
 
-	// initialize "cloudsql" database plugin
-	cloudsqlDatabase, err := cloudsql.New(cloudsql.DBType(flagDBType))
-	if err != nil {
-		logger.Error("failed to initialize cloudsql database plugin. aborting now.", err)
-		os.Exit(1)
+	// provide factory to initialize a "cloudsql" database plugin
+	pluginFactory := func() (interface{}, error) {
+		cloudsqlDatabase, err := cloudsql.New(cloudsql.DBType(flagDBType))
+		if err != nil {
+			return nil, errors.Wrap(err, "failed to get new instance of cloudsql database plugin")
+		}
+		return cloudsqlDatabase, nil
 	}
 
 	// Vault communicates to plugins over RPC
 	// start RPC server to which vault will connect to
 	// See: https://www.vaultproject.io/docs/secrets/databases/custom#serving-a-plugin
-	// TODO determine whether ServeMultiplex is required
-	// See: https://www.vaultproject.io/docs/plugins/plugin-architecture#plugin-multiplexing
-	serveConfig := dbplugin.ServeConfig(cloudsqlDatabase.(dbplugin.Database))
+	var serveConfig *plugin.ServeConfig
+	if flagMultiplex {
+		// See: https://www.vaultproject.io/docs/plugins/plugin-architecture#plugin-multiplexing
+		serveConfig = dbplugin.ServeConfigMultiplex(pluginFactory)
+	} else {
+		dbPlugin, err := pluginFactory()
+		if err != nil {
+			logger.Error("failed to initialize database plugin. aborting now.", err)
+			os.Exit(1)
+		}
+		serveConfig = dbplugin.ServeConfig(dbPlugin.(dbplugin.Database))
+	}
+	if serveConfig == nil {
+		logger.Error("failed to initialize server config for plugin. aborting now.")
+		os.Exit(1)
+	}
 	if testServerChan != nil {
+		// if running in test mode, use channel to pry into the plugin's lifecycle
 		serveConfig.Test = &plugin.ServeTestConfig{
 			Context:          ctx,
 			ReattachConfigCh: testServerChan,
@@ -58,6 +77,5 @@ func Serve(ctx context.Context, testServerChan chan *plugin.ReattachConfig) {
 	} else {
 		serveConfig.Logger = logger
 	}
-
 	plugin.Serve(serveConfig)
 }

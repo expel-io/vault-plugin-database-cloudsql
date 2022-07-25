@@ -17,3 +17,6 @@ build/
 
 # fake google application default credentials for testing
 fake-creds.json
+
+# IDE
+.vscode

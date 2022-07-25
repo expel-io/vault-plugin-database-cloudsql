@@ -12,7 +12,7 @@ import (
 )
 
 func TestServe(t *testing.T) {
-	os.Args = []string{"my-plugin"}
+	os.Args = []string{"my-plugin", "-multiplex=true"}
 	ctx := context.Background()
 	reattachConfigCh := make(chan *plugin.ReattachConfig)
 
