@@ -69,10 +69,10 @@ func Serve(ctx context.Context, testServerChan chan *plugin.ReattachConfig) {
 	plugin.Serve(serveConfig)
 }
 
-func initServeConfig(flagMultiplex bool, pluginFactory dbplugin.Factory, logger hclog.Logger) (*plugin.ServeConfig, error) {
-	logger.Debug("initializing cloudsql plugin with multiplexing=%t", flagMultiplex)
+func initServeConfig(multiplex bool, pluginFactory dbplugin.Factory, logger hclog.Logger) (*plugin.ServeConfig, error) {
+	logger.Debug("initializing cloudsql plugin with multiplexing=%t", multiplex)
 	var serveConfig *plugin.ServeConfig
-	if flagMultiplex {
+	if multiplex {
 		// See: https://www.vaultproject.io/docs/plugins/plugin-architecture#plugin-multiplexing
 		serveConfig = dbplugin.ServeConfigMultiplex(pluginFactory)
 	} else {

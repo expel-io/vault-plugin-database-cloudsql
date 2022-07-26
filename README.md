@@ -26,6 +26,7 @@ The following plugin arguments are supported:
 * `-db-type`, defaults to `cloudsql-postgres`.
 This is currently the only supported database type.
 * `-log-level`, defaults to `info`
+* `multiplex`, defaults to `true`
 
 ## Getting Started
 
