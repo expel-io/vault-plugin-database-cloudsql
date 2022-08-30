@@ -7,7 +7,7 @@ and configure a database using terraform.
 ## Prerequisites
 
 * vault-cli (version 1.8.1)
-* terraform
+* terraform (1.2.7)
 
 ## Steps
 
