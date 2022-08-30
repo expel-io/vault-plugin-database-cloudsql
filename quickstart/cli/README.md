@@ -11,17 +11,16 @@ and configure a database.
 
 ## Steps
 
-## Create and configure a database in GCP
+### Create and configure a database in GCP
 
-### Ensure you have your application default credentials set
+#### Ensure you have your [application default credentials][0] set
 
-* Create the instance
+#### Create the instance
 
 ```bash
-#export the relevant variables
 export INSTANCE_NAME=<instance-name>
 export REGION=<region>
-export DB_VERSION=POSTGRES_12
+export DB_VERSION=<pg-version> #for example, POSTGRES_14
 export GCP_PROJECT=<your-project-id>
 
 gcloud sql instances create $INSTANCE_NAME \
@@ -30,13 +29,14 @@ gcloud sql instances create $INSTANCE_NAME \
 --database-version=$DB_VERSION
 ```
 
-* Create a user in the instance, vault will use this user to connect to the instance
+#### Create an admin user in the instance
 
 ```bash
-#export the relevant variables
+
 export VAULT_DB_USER=vault-user
 export VAULT_DB_USER_PASS=ilovemymom123
 
+# vault will use this user to connect to the instance
 gcloud sql users create $VAULT_DB_USER \
 -i $INSTANCE_NAME \
 --password=$VAULT_DB_USER_PASS
@@ -44,17 +44,15 @@ gcloud sql users create $VAULT_DB_USER \
 
 ### Build the plugin & start the server
 
-* Build the plugin
+#### Build the plugin
 
 ```bash
-# change to the git root directory
-cd ../../
-
+# From the root of this git repository
 # build the plugin
 make build
 ```
 
-* Create a config file for vault.
+#### Create a config file for vault
 
 ```bash
 # change back to the cli directory
@@ -66,37 +64,35 @@ plugin_directory = "$PWD/../../build/"
 EOF
 ```
 
-* Start up a vault-server
+#### Start up a vault-server
 
 ```bash
-#export the relevant variables
 export VAULT_ROOT_TOKEN=root
 
 vault server -dev -dev-root-token-id=$VAULT_ROOT_TOKEN -log-level=debug -config=./vault-config.hcl
 ```
 
-## Configure the plugin
+### Configure the plugin
 
-### IN A NEW TERMINAL
+#### Open a new shell session
 
-* Login to the vault server
+#### Login to the vault server
 
 ```bash
-#export the relevant variables
 export VAULT_ROOT_TOKEN=root
 export VAULT_ADDR='http://127.0.0.1:8200'
 
 vault login $VAULT_ROOT_TOKEN
 ```
 
-* List the plugins
+#### List the plugins
 
 ```bash
 # Notice there is no vault-plugin-database-cloudsql plugin
 vault plugin list
 ```
 
-* Register the plugin
+#### Register the plugin
 
 <!-- markdownlint-disable MD013 -->
 ```bash
@@ -123,27 +119,27 @@ curl --header "X-Vault-Token: $VAULT_ROOT_TOKEN" \
 ```
 <!-- markdownlint-enable MD013 -->
 
-* List the plugins again
+#### List the plugins again
 
 ```bash
 # Notice there is no vault-plugin-database-cloudsql plugin
 vault plugin list | grep vault-plugin-database-cloudsql
 ```
 
-* Get some info about the plugin
+#### Get some info about the plugin
 
 ```bash
 vault plugin info database vault-plugin-database-cloudsql
 ```
 
-* List the secrets
+#### List the secrets
 
 ```bash
 # Notice there is no mount for the plugin we just configured
 vault secrets list
 ```
 
-* Mount and enable the secrets backend
+#### Mount and enable the secrets backend
 
 ```bash
 tee mount-payload.json <<EOF
@@ -167,16 +163,16 @@ curl --header "X-Vault-Token: $VAULT_ROOT_TOKEN" \
     http://127.0.0.1:8200/v1/sys/mounts/cloudsql/postgres
 ```
 
-* List the secrets backends again
+#### List the secrets backends again
 
 ```bash
 # Notice the /cloudsql/postgres mount
 vault secrets list
 ```
 
-## Configure Vault for the specific instance
+### Configure Vault for the specific instance
 
-* Export all of the necessary variables
+#### Export all of the necessary variables
 
 ```bash
 export INSTANCE_NAME=test-instance
@@ -187,7 +183,7 @@ export VAULT_DB_USER=vault-user
 export VAULT_DB_USER_PASS=ilovemymom123
 ```
 
-* Create a vault-managed connection for the instance.
+#### Create a vault-managed connection for the instance
 
 <!-- markdownlint-disable MD013 -->
 ```bash
@@ -200,7 +196,7 @@ vault write cloudsql/postgres/config/test-instance \
 ```
 <!-- markdownlint-enable MD013 -->
 
-* Create a default readonly database accessor role
+#### Create a default readonly database accessor role
 
 <!-- markdownlint-disable MD013 -->
 ```bash
@@ -213,19 +209,21 @@ vault write cloudsql/postgres/roles/test-instance \
 ```
 <!-- markdownlint-enable MD013 -->
 
-## Accessing Credentials
+### Accessing Credentials
 
-* Use Vault to generate short lived database credentials!
+#### Use Vault to generate short lived database credentials
 
 ```bash
 vault read cloudsql/postgres/creds/test-instance
 ```
 
-* Connect to the database.
+#### Connect to the database
 
 ```bash
 # When prompted for your password paste in the value from the output of above
 gcloud beta sql connect $INSTANCE_NAME \
     --user="<paste from the output above>" \
-    --database=postgres --port=5433
+    --database=postgres
 ```
+
+[0]: https://cloud.google.com/sdk/gcloud/reference/auth/application-default

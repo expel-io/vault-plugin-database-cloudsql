@@ -11,23 +11,21 @@ and configure a database using terraform.
 
 ## Steps
 
-### Build the plugin
+### Build the plugin & start the server
 
-* Build the plugin
+#### Build the plugin
 
 ```bash
-# change to the git root directory
-cd ../../
-
+# From the root of this git repository
 # build the plugin
 make build
 ```
 
-* Create a config file for vault.
+#### Create a config file for vault
 
 ```bash
 # change back to the cli directory
-cd quickstart/cli
+cd quickstart/tf
 
 # the plugin_directory is the path to the plugin binary we just built
 tee vault-config.hcl <<EOF
@@ -35,21 +33,20 @@ plugin_directory = "$PWD/../../build/"
 EOF
 ```
 
-* Start up a vault-server
+#### Start up a vault-server
 
 ```bash
-#export the relevant variables
 export VAULT_ROOT_TOKEN=root
 
 #start the server in dev mode
 vault server -dev -dev-root-token-id=$VAULT_ROOT_TOKEN -log-level=debug -config=./vault-config.hcl
 ```
 
-## Terraform
+### Terraform
 
-### IN A NEW TERMINAL
+#### Open a new shell session
 
-* Export the relevant variables
+#### Export the relevant variables
 
 ```bash
 export INSTANCE_NAME=test-tf-instance
@@ -57,7 +54,7 @@ export REGION=<your-region>
 export GCP_PROJECT=<your-project-id>
 ```
 
-* Create a default variables file
+#### Create a default variables file
 
 <!-- markdownlint-disable MD013 -->
 ```bash
@@ -70,26 +67,26 @@ EOF
 ```
 <!-- markdownlint-enable MD013 -->
 
-* Run Terraform
+#### Run Terraform
 
 ```bash
 terraform init
 terraform apply
 ```
 
-## Accessing Credentials
+### Accessing Credentials
 
-* Use Vault to generate short lived database credentials!
+#### Use Vault to generate short lived database credentials
 
 ```bash
 vault read cloudsql/postgres/creds/$INSTANCE_NAME
 ```
 
-* Connect to the database.
+#### Connect to the database
 
 ```bash
 # When prompted for your password paste in the value from the output of above
 gcloud beta sql connect $INSTANCE_NAME \
     --user="<paste from the output above>" \
-    --database=postgres --port=5433
+    --database=postgres
 ```
