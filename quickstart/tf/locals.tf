@@ -19,5 +19,3 @@ locals {
   access_max_ttl_seconds    = 21600
   cloudsql_plugin_log_level = "debug"
 }
-
-

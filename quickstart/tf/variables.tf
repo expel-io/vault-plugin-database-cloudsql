@@ -6,8 +6,8 @@ variable "plugin_sha" {
 }
 
 variable "project" {
-    description = "Google Cloud project name"
-  
+  description = "Google Cloud project name"
+
 }
 
 variable "cloudsql_postgres_mount_path" {
@@ -15,11 +15,11 @@ variable "cloudsql_postgres_mount_path" {
 }
 
 variable "region" {
-    default = "us-east1"
+  default = "us-east1"
 }
-  
+
 variable "instance_port" {
-    default = "5432"
+  default = "5432"
 }
 
 

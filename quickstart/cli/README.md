@@ -13,7 +13,7 @@ and configure a database.
 
 ### Create and configure a database in GCP
 
-#### Ensure you have your [application default credentials][0] set
+#### Ensure you have your Google [Application Default Credentials][0] (ADC) set
 
 #### Create the instance
 
@@ -96,11 +96,12 @@ vault plugin list
 
 <!-- markdownlint-disable MD013 -->
 ```bash
+# make sure to run this from the quickstart/cli directory
 tee register-payload.json <<EOF
 {
     "name": "vault-plugin-database-cloudsql",
     "type": "database",
-    "sha256": "$(sha256sum vault-plugin-database-cloudsql/build/vault-plugin-database-cloudsql | awk '{print $1}')",
+    "sha256": "$(sha256sum ../../build/vault-plugin-database-cloudsql | awk '{print $1}')",
     "args": [
         "-log-level=debug",
         "-db-type=cloudsql-postgres"
@@ -177,7 +178,7 @@ vault secrets list
 ```bash
 export INSTANCE_NAME=test-instance
 export REGION=us-east1
-export DB_VERSION=POSTGRES_12
+export DB_VERSION==<pg-version> #for example, POSTGRES_14
 export GCP_PROJECT=<your-project-id>
 export VAULT_DB_USER=vault-user
 export VAULT_DB_USER_PASS=ilovemymom123

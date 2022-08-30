@@ -58,9 +58,10 @@ export GCP_PROJECT=<your-project-id>
 
 <!-- markdownlint-disable MD013 -->
 ```bash
+# make sure to run this from the quickstart/tf directory
 tee vars.auto.tfvars <<EOF
 instance_name = "$INSTANCE_NAME"
-plugin_sha    = "$(sha256sum vault-plugin-database-cloudsql/build/vault-plugin-database-cloudsql | awk '{print $1}')"
+plugin_sha    = "$(sha256sum ../../build/vault-plugin-database-cloudsql | awk '{print $1}')"
 region        = "$REGION"
 project       = "$GCP_PROJECT"
 EOF
