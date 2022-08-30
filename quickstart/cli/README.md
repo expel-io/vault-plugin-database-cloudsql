@@ -122,7 +122,7 @@ curl --header "X-Vault-Token: $VAULT_ROOT_TOKEN" \
 #### List the plugins again
 
 ```bash
-# Notice there is no vault-plugin-database-cloudsql plugin
+# You should now see the plugin is present!
 vault plugin list | grep vault-plugin-database-cloudsql
 ```
 
