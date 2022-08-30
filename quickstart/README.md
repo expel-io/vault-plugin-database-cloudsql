@@ -1,10 +1,11 @@
 # Overview
 
-The quick start guides in the sub directories will walk through
-deploying a CloudSQL instance, dev Vault Server, as well as
-configuring the `vault-plugin-database-cloudsql` plugin.
-Each directory will deploy/configure the same components
-just using different tooling.
+The guides in the sub directories will walk you
+through deploying the following resources:
 
-* **cli**: uses `vault` cli and `gcloud` cli.
-* **terraform**: uses `vault` cli and `terraform`.
+- CloudSQL instance
+- Dev Vault Server
+- configuring the `vault-plugin-database-cloudsql` plugin
+
+Each directory showcases how to deploy and configure the resources above,
+using the CLI or Terraform.

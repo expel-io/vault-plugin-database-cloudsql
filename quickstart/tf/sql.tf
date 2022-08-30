@@ -16,7 +16,6 @@ resource "google_sql_database_instance" "test" {
 resource "random_password" "initial_connection_password" {
   length  = 16
   special = false
-
 }
 
 resource "google_sql_user" "vault_manager_user" {
