@@ -2,6 +2,13 @@
 
 This is a Hashicorp Vault database plugin to connect to CloudSQL instances with [GoogleCloudPlatform/cloud-sql-go-connector][0].
 
+## Compatibility
+
+- This plugin currently only supports connecting to postgres CloudSQL instances.
+PRs welcome!
+- This plugin has been tested with Hashicorp Vault version `1.8.x`.
+Stay tuned as we add support for newer Hashicorp Vault versions.
+
 From Google Cloud's documentation:
 <!-- markdownlint-disable MD013 -->
 > Using the Cloud SQL Auth proxy is the recommended method for connecting to a Cloud SQL instance. See: [Connect using the Cloud SQL Auth proxy][0]
@@ -23,10 +30,10 @@ for all database specific interactions.
 
 The following plugin arguments are supported:
 
-* `-db-type`, defaults to `cloudsql-postgres`.
+- `-db-type`, defaults to `cloudsql-postgres`.
 This is currently the only supported database type.
-* `-log-level`, defaults to `info`
-* `multiplex`, defaults to `true`
+- `-log-level`, defaults to `info`
+- `multiplex`, defaults to `true`
 
 ## Getting Started
 
@@ -88,7 +95,6 @@ make test
 ```
 
 [0]: github.com/GoogleCloudPlatform/cloud-sql-go-connector
-[1]: https://cloud.google.com/sql/docs/postgres/connect-admin-proxy#overview
 [2]: https://cloud.google.com/sql/docs/postgres/sql-proxy
 [3]: https://github.com/hashicorp/vault/tree/main/plugins/database
 [4]: https://www.vaultproject.io/docs/plugins/plugin-architecture#plugin-registration
