@@ -86,6 +86,8 @@ resource "vault_generic_endpoint" "configure_custom_cloudsql_plugin" {
 }
 ```
 
+### For an in depth guide see our [quickstart folder][1]
+
 ## Development
 
 In order to run unit tests, run the following command:
@@ -95,6 +97,7 @@ make test
 ```
 
 [0]: github.com/GoogleCloudPlatform/cloud-sql-go-connector
+[1]: ./quickstart
 [2]: https://cloud.google.com/sql/docs/postgres/sql-proxy
 [3]: https://github.com/hashicorp/vault/tree/main/plugins/database
 [4]: https://www.vaultproject.io/docs/plugins/plugin-architecture#plugin-registration
