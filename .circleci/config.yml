@@ -3,6 +3,7 @@ version: 2.1
 
 orbs:
   go: circleci/go@1.7.1
+  snyk: snyk/snyk@1.2.3
 
 workflows:
   ci:
@@ -15,6 +16,11 @@ workflows:
       - test:
           requires:
             - lint
+          filters:
+            branches:
+              only:
+                - /.*/
+      - scan:
           filters:
             branches:
               only:
@@ -49,3 +55,29 @@ jobs:
       - run:
           name: run unit tests
           command: make test
+
+  scan:
+    docker:
+      - image: cimg/go:1.18.2
+    steps:
+      - checkout
+      # push scan results to the Snyk UI if we on the default branch
+      - when:
+          condition:
+            equal: [ main, << pipeline.git.branch >> ]
+          steps:
+            - snyk/scan:
+                fail-on-issues: true
+                organization: "cbaa4672-dc38-4a7d-b797-e350dbdf029e" #Open Source Snyk Organization
+                monitor-on-build: true
+      # don't push scan results to the Snyk UI if we're not on the default branch
+      - when:
+          condition:
+            not:
+              equal: [ main, << pipeline.git.branch >> ]
+          steps:
+            - snyk/scan:
+                fail-on-issues: true
+                organization: "cbaa4672-dc38-4a7d-b797-e350dbdf029e" #Open Source Snyk Organization
+                monitor-on-build: false
+
