@@ -2,9 +2,10 @@
 
 DC=docker-compose
 
-# for local development only. this plugin is installed through the bootstrap sidecar.
+# for local development only. this plugin should be made available to your vault runtime.
+# for this target to work, add a Dockerfile that builds the plugin.
 image:
-	docker build --build-arg GIT_VERSION=local . -t gcr.io/expel-engineering-devops/vault-plugin-database-cloudsql:latest
+	docker buildx build --load --platform linux/amd64 --build-arg GIT_VERSION=local . -t gcr.io/my-registry/vault-plugin-database-cloudsql:latest
 
 test:
 	echo '{ "type": "authorized_user" }' > ./fake-creds.json
