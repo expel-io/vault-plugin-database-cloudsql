@@ -1,6 +1,6 @@
 module vault-plugin-database-cloudsql
 
-go 1.18
+go 1.20
 
 require (
 	cloud.google.com/go/cloudsqlconn v1.5.2

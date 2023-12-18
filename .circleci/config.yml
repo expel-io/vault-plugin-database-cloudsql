@@ -2,7 +2,7 @@
 version: 2.1
 
 orbs:
-  go: circleci/go@1.7.1
+  go: circleci/go@1.10.0
 
 workflows:
   ci:
@@ -35,7 +35,7 @@ jobs:
               sudo mkdir -p /usr/local/go
               sudo chown -R $(whoami): /usr/local/go
       - go/install:
-          version: 1.18.2
+          version: "1.20"
           cache: false
       - run:
           name: lint source code
@@ -43,7 +43,7 @@ jobs:
 
   test:
     docker:
-      - image: cimg/go:1.18.2
+      - image: cimg/go:1.20
     steps:
       - checkout
       - run:
