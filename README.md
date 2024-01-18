@@ -1,3 +1,7 @@
+# Deprecation Warning
+
+With the release of Vault version [1.15.1][6], Vault now includes native support for Google Cloud Platform’s CloudSQL databases. Further details are available [here][7].
+
 # vault-plugin-database-cloudsql
 
 This is a Hashicorp Vault database plugin to connect to CloudSQL instances with [GoogleCloudPlatform/cloud-sql-go-connector][0].
@@ -102,3 +106,5 @@ make test
 [3]: https://github.com/hashicorp/vault/tree/main/plugins/database
 [4]: https://www.vaultproject.io/docs/plugins/plugin-architecture#plugin-registration
 [5]: https://www.vaultproject.io/api-docs/system/plugins-catalog
+[6]: https://github.com/hashicorp/vault/releases/tag/v1.15.0
+[7]: https://github.com/hashicorp/vault/pull/22445
