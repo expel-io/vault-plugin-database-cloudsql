@@ -4,10 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
-	"github.com/expel-io/vault-plugin-database-cloudsql/cloudsql"
 	"github.com/hashicorp/go-plugin"
 )
 
@@ -29,7 +29,7 @@ func TestServe(t *testing.T) {
 	// assert that the driver was registered correctly
 	foundDriver := false
 	for _, v := range sql.Drivers() {
-		if v == cloudsql.Postgres.String() {
+		if strings.HasPrefix(v, "postgres-") {
 			foundDriver = true
 		}
 	}
