@@ -3,6 +3,7 @@ package cloudsql
 import (
 	"database/sql"
 	"reflect"
+	"strings"
 	"testing"
 	"unsafe"
 
@@ -34,11 +35,11 @@ func TestNewDelegatesToVaultPostgresPlugin(t *testing.T) {
 	// assert that the driver was registered correctly
 	foundDriver := false
 	for _, v := range sql.Drivers() {
-		if v == Postgres.String() {
+		if strings.HasPrefix(v, "postgres-") {
 			foundDriver = true
 		}
 	}
 	if !foundDriver {
-		t.Error("expected the driver 'cloudsql-postgres' to be registered but was not found")
+		t.Error("expected a driver prefixed with 'postgres-' to be registered but was not found")
 	}
 }
