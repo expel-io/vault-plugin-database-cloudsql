@@ -2,6 +2,7 @@ package cloudsql
 
 import (
 	"context"
+	"fmt"
 
 	"cloud.google.com/go/cloudsqlconn"
 	"cloud.google.com/go/cloudsqlconn/postgres/pgxv4"
@@ -9,6 +10,8 @@ import (
 	dbplugin "github.com/hashicorp/vault/sdk/database/dbplugin/v5"
 	"github.com/hashicorp/vault/sdk/database/helper/connutil"
 	"github.com/pkg/errors"
+
+	uuid "github.com/hashicorp/go-uuid"
 )
 
 // CloudSQL implements Vault's Database interface
@@ -111,9 +114,14 @@ func newPostgresDatabase(dbType DBType, connProducer *connutil.SQLConnectionProd
 	// attribute 'sslmode=disable' is required. even though the sslmode parameter is set to disable,
 	// the Cloud SQL Auth proxy does provide an encrypted connection.
 	// See: https://cloud.google.com/sql/docs/postgres/connect-admin-proxy#connect-to-proxy
-	cleanup, err := pgxv4.RegisterDriver(dbType.String(), cloudsqlconn.WithIAMAuthN())
+	driverSuffix, err := uuid.GenerateUUID()
+	driverName := fmt.Sprintf("postgres-%s", driverSuffix)
 	if err != nil {
-		return nil, nil, nil, errors.Wrap(err, "failed to register 'postgres' driver with 'cloud-sql-go-connector'")
+		return nil, nil, nil, errors.Wrap(err, "failed to generate unique 'postgres' driver name.")
+	}
+	cleanup, err := pgxv4.RegisterDriver(driverName, cloudsqlconn.WithIAMAuthN())
+	if err != nil {
+		return nil, nil, nil, errors.Wrapf(err, "failed to register 'postgres' driver with name %s.", driverName)
 	}
 
 	// delegate to vault's original postgres backend
