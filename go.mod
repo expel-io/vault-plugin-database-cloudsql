@@ -7,6 +7,7 @@ require (
 	github.com/expel-io/vault-plugin-database-cloudsql/cloudsql v0.0.0-00010101000000-000000000000
 	github.com/hashicorp/go-hclog v1.5.0
 	github.com/hashicorp/go-plugin v1.5.2
+	github.com/hashicorp/go-uuid v1.0.3
 	github.com/hashicorp/vault v1.10.3
 	github.com/hashicorp/vault/api v1.9.1
 	github.com/hashicorp/vault/sdk v0.10.2
@@ -47,7 +48,6 @@ require (
 	github.com/hashicorp/go-secure-stdlib/plugincontainer v0.2.2 // indirect
 	github.com/hashicorp/go-secure-stdlib/strutil v0.1.2 // indirect
 	github.com/hashicorp/go-sockaddr v1.0.2 // indirect
-	github.com/hashicorp/go-uuid v1.0.3 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.1-vault-5 // indirect
